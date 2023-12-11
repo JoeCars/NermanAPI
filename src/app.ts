@@ -68,6 +68,10 @@ app.get("/", async (req, res) => {
 				votesParticipated,
 				participationRate
 			};
+		})
+		.sort((userA, userB) => {
+			// Sorting from highest to lowest participation rate.
+			return userB.participationRate - userA.participationRate;
 		});
 
 	res.status(200).json(usersStats);
