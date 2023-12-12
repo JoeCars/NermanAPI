@@ -1,6 +1,11 @@
-import { model, Schema } from "mongoose";
+import { model, Schema, Types } from "mongoose";
 
-const PollChannelSchema = new Schema({
+export interface IPollChannel {
+	_id: Types.ObjectId;
+	channelId: string;
+}
+
+const PollChannelSchema = new Schema<IPollChannel>({
 	_id: Schema.Types.ObjectId,
 	channelId: {
 		type: String,

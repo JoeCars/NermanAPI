@@ -1,6 +1,15 @@
-import { Schema, model } from "mongoose";
+import { Schema, model, Types } from "mongoose";
 
-const userSchema = new Schema({
+export interface IUser {
+	_id: Types.ObjectId;
+	guildId: string;
+	discordId: string;
+	nameHistory: string[];
+	eligibleChannels: Map<string, { eligiblePolls: number; participatedPolls: number }>;
+	status: string;
+}
+
+const userSchema = new Schema<IUser>({
 	_id: Schema.Types.ObjectId,
 	guildId: { type: String, required: true },
 	discordId: {
