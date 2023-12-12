@@ -1,3 +1,4 @@
+import User, { IUser } from "../schemas/User";
 import Poll from "../schemas/Poll";
 import PollChannel from "../schemas/PollChannel";
 
@@ -11,4 +12,18 @@ export async function fetchNouncillors() {
 		throw new Error(`Unable to find most recent poll for id ${process.env.NOUNCIL_CHANNEL_ID}`);
 	}
 	return [...poll.allowedUsers.keys()];
+}
+
+export function extractNouncillorStatistics(user: IUser) {
+	const { eligiblePolls: votesEligible, participatedPolls: votesParticipated } = user.eligibleChannels.get(
+		process.env.NOUNCIL_CHANNEL_ID!
+	)!;
+	const participationRate = (votesParticipated / votesEligible) * 100;
+
+	return {
+		userId: user.discordId,
+		votesEligible,
+		votesParticipated,
+		participationRate
+	};
 }

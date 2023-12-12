@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 import "dotenv/config";
 
 import User from "./schemas/User";
-import { fetchNouncillors } from "./helpers/nouncillor-retrieval";
+import { fetchNouncillors, extractNouncillorStatistics } from "./helpers/nouncillor-retrieval";
 
 const app = express();
 
@@ -34,20 +34,8 @@ app.get("/:discordId", async (req, res) => {
 		});
 	}
 
-	const {
-		eligiblePolls: votesEligible,
-		participatedPolls: votesParticipated
-	}: { eligiblePolls: number; participatedPolls: number } = votingStats;
-
-	const participationRate = (votesParticipated / votesEligible) * 100;
-
-	const userStats = {
-		userId: discordId,
-		votesEligible,
-		votesParticipated,
-		participationRate
-	};
-
+	const userStats = extractNouncillorStatistics(user);
+	
 	res.status(200).json(userStats);
 });
 
@@ -69,20 +57,7 @@ app.get("/", async (req, res) => {
 			return canVote && isNouncillor;
 		})
 		.map((user) => {
-			const {
-				eligiblePolls: votesEligible,
-				participatedPolls: votesParticipated
-			}: { eligiblePolls: number; participatedPolls: number } = user.eligibleChannels.get(
-				process.env.NOUNCIL_CHANNEL_ID!
-			);
-			const participationRate = (votesParticipated / votesEligible) * 100;
-
-			return {
-				userId: user.discordId,
-				votesEligible,
-				votesParticipated,
-				participationRate
-			};
+			return extractNouncillorStatistics(user);
 		})
 		.sort((userA, userB) => {
 			// Sorting from highest to lowest participation rate.
