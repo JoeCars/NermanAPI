@@ -1,4 +1,4 @@
-import express from "express";
+import express, { NextFunction, Request, Response } from "express";
 import mongoose from "mongoose";
 import "dotenv/config";
 
@@ -19,7 +19,6 @@ app.get("/:discordId", async (req, res) => {
 	}
 
 	const user = await User.findOne({ discordId: discordId, guildId: process.env.NOUNCIL_GUILD_ID }).exec();
-
 	if (!user) {
 		return res.status(500).json({
 			message: "no user found."
@@ -27,7 +26,6 @@ app.get("/:discordId", async (req, res) => {
 	}
 
 	const votingStats = user.eligibleChannels.get(process.env.NOUNCIL_CHANNEL_ID!);
-
 	if (!votingStats) {
 		return res.status(500).json({
 			message: "no user found."
@@ -35,13 +33,12 @@ app.get("/:discordId", async (req, res) => {
 	}
 
 	const userStats = extractNouncillorStatistics(user);
-	
+
 	res.status(200).json(userStats);
 });
 
 app.get("/", async (req, res) => {
 	const users = await User.find({ guildId: process.env.NOUNCIL_GUILD_ID }).exec();
-
 	if (!users) {
 		return res.status(500).json({
 			message: "no users found."
@@ -49,7 +46,6 @@ app.get("/", async (req, res) => {
 	}
 
 	const nouncillors = await fetchNouncillors();
-
 	const usersStats = users
 		.filter((user) => {
 			const canVote = user.eligibleChannels.get(process.env.NOUNCIL_CHANNEL_ID!);
@@ -69,6 +65,13 @@ app.get("/", async (req, res) => {
 
 app.use(() => {
 	console.log("error 404");
+});
+
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+	console.error("received an error", err);
+	return res.status(500).json({
+		error: new Error("Server error.")
+	});
 });
 
 app.listen(process.env.PORT, () => {
