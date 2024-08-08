@@ -7,18 +7,19 @@ export interface IUser {
 	nameHistory: string[];
 	eligibleChannels: Map<string, { eligiblePolls: number; participatedPolls: number }>;
 	status: string;
+	username?: string;
 }
 
 const userSchema = new Schema<IUser>({
 	_id: Schema.Types.ObjectId,
-	guildId: { type: String, required: true },
+	guildId: { type: Schema.Types.String, required: true },
 	discordId: {
-		type: String,
+		type: Schema.Types.String,
 		required: true,
 		unique: false
 	},
 	nameHistory: {
-		type: [String]
+		type: [Schema.Types.String]
 	},
 	eligibleChannels: {
 		type: Map,
@@ -26,9 +27,13 @@ const userSchema = new Schema<IUser>({
 		default: new Map()
 	},
 	status: {
-		type: String,
+		type: Schema.Types.String,
 		enum: ["active", "inactive", "warning"],
 		default: "active"
+	},
+	username: {
+		type: Schema.Types.String,
+		required: false
 	}
 });
 

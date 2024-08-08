@@ -24,6 +24,7 @@ export function extractNouncillorStatistics(user: IUser) {
 		userId: user.discordId,
 		votesEligible,
 		votesParticipated,
-		participationRate
+		participationRate,
+		username: user.username ?? ""
 	};
 }
