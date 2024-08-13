@@ -25,6 +25,6 @@ export function extractNouncillorStatistics(user: IUser) {
 		votesEligible,
 		votesParticipated,
 		participationRate,
-		username: user.username ?? ""
+		username: user.nameHistory[user.nameHistory.length - 1] ?? ""
 	};
 }

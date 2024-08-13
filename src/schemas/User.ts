@@ -7,7 +7,6 @@ export interface IUser {
 	nameHistory: string[];
 	eligibleChannels: Map<string, { eligiblePolls: number; participatedPolls: number }>;
 	status: string;
-	username?: string;
 }
 
 const userSchema = new Schema<IUser>({
@@ -30,10 +29,6 @@ const userSchema = new Schema<IUser>({
 		type: Schema.Types.String,
 		enum: ["active", "inactive", "warning"],
 		default: "active"
-	},
-	username: {
-		type: Schema.Types.String,
-		required: false
 	}
 });
 
