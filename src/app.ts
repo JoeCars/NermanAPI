@@ -2,11 +2,13 @@ import express, { NextFunction, Request, Response } from "express";
 import mongoose from "mongoose";
 import "dotenv/config";
 
-import { router as indexRouter, router } from "./routes/index";
+import { router as indexRouter } from "./routes/index";
+import { router as pollRouter } from "./routes/poll";
 
 const app = express();
 
-app.use(indexRouter);
+app.use('/poll', pollRouter);
+app.use('/', indexRouter);
 
 app.use((req: Request, res: Response) => {
 	res.status(404).json({
