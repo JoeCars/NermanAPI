@@ -6,6 +6,8 @@ import PollChannel, { IPollChannel } from "../schemas/PollChannel";
 
 // TODO: Move these two functions to Poll schema.
 function isProposal(poll: IPoll) {
+	// Prop is used by all the automatically created ones.
+	// Proposal is used by the manual ones before prop 80.
 	const startWithPropAndNumberRegex = new RegExp(/^((Prop)|(Proposal)) [0-9]+.*/g);
 	const matches = poll.pollData.title.match(startWithPropAndNumberRegex);
 	if (!matches || matches.length === 0) {
@@ -75,9 +77,14 @@ async function countVotes(poll: IPoll) {
 		}
 	}
 
+	let forVotes = choiceCounts.get("for") ?? 0;
+	forVotes += choiceCounts.get("Yes") ?? 0; // Used by manual ones before prop 80.
+	let againstVotes = choiceCounts.get("against") ?? 0;
+	againstVotes += choiceCounts.get("No") ?? 0; // Used by manual ones before prop 80.
+
 	return {
-		forVotes: choiceCounts.get("for") ?? 0,
-		againstVotes: choiceCounts.get("against") ?? 0
+		forVotes,
+		againstVotes
 	};
 }
 
