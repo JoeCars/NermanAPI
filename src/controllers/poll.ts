@@ -82,7 +82,7 @@ async function countVotes(poll: IPoll) {
 	forVotes += choiceCounts.get("yes") ?? 0; // Used by manual ones before prop 80.
 	let againstVotes = choiceCounts.get("against") ?? 0;
 	againstVotes += choiceCounts.get("no") ?? 0; // Used by manual ones before prop 80.
-	const oldAbstainVotes = choiceCounts.get("against") ?? 0; // Used by manual ones before prop 80.
+	const oldAbstainVotes = choiceCounts.get("abstain") ?? 0; // Used by manual ones before prop 80.
 
 	return {
 		forVotes,
