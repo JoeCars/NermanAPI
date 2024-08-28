@@ -22,18 +22,16 @@ function extractProposalId(poll: IPoll) {
 	// [1] is the proposal number.
 	const unprocessedProposalId = splitTitle[1];
 	if (!unprocessedProposalId) {
-		return null;
+		throw new Error(`unable to find poll number for "${title}"`);
 	}
 
 	// Processing is required because of the ":" attached to the number.
 	const numberRegex = new RegExp(/[0-9]+/g);
 	const numberMatches = unprocessedProposalId.match(numberRegex);
-	let processedProposalId: number | null = null;
-	if (numberMatches) {
-		processedProposalId = Number(numberMatches[0]);
+	if (!numberMatches || !numberMatches[0]) {
+		throw new Error(`unable to find poll number for "${title}"`);
 	}
-
-	return processedProposalId;
+	return Number(numberMatches[0]);
 }
 
 function countUsersEligible(poll: IPoll) {
@@ -151,6 +149,9 @@ export async function getPolls(req: Request, res: Response) {
 			abstainVotes
 		});
 	}
+	proposalPollStats.sort((poll1, poll2) => {
+		return poll1.proposalId - poll2.proposalId;
+	});
 	res.json(proposalPollStats);
 }
 
