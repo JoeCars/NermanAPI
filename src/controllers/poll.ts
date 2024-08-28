@@ -141,15 +141,14 @@ export async function getPolls(req: Request, res: Response) {
 		const usersParticipated = countUsersParticipated(poll);
 		const { forVotes, againstVotes } = await countVotes(poll);
 		const abstainVotes = countAbstainVotes(poll);
-		const pollOutcome = determinePollOutcome(poll, nouncilPollChannel, forVotes, againstVotes, abstainVotes);
+
 		proposalPollStats.push({
 			proposalId,
 			usersEligible,
 			usersParticipated,
 			forVotes,
 			againstVotes,
-			abstainVotes,
-			pollOutcome
+			abstainVotes
 		});
 	}
 	res.json(proposalPollStats);
