@@ -67,7 +67,8 @@ async function countVotes(poll: IPoll) {
 	const votes = await Vote.find({ poll: poll._id }).lean().exec();
 	const choiceCounts = new Map<string, number>();
 	for (const vote of votes) {
-		for (const choice of vote.choices) {
+		for (let choice of vote.choices) {
+			choice = choice.toLowerCase(); // to standardize the responses
 			const choiceCount = choiceCounts.get(choice);
 			if (choiceCount) {
 				choiceCounts.set(choice, choiceCount + 1);
@@ -78,9 +79,9 @@ async function countVotes(poll: IPoll) {
 	}
 
 	let forVotes = choiceCounts.get("for") ?? 0;
-	forVotes += choiceCounts.get("Yes") ?? 0; // Used by manual ones before prop 80.
+	forVotes += choiceCounts.get("no") ?? 0; // Used by manual ones before prop 80.
 	let againstVotes = choiceCounts.get("against") ?? 0;
-	againstVotes += choiceCounts.get("No") ?? 0; // Used by manual ones before prop 80.
+	againstVotes += choiceCounts.get("no") ?? 0; // Used by manual ones before prop 80.
 
 	return {
 		forVotes,
