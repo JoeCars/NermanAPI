@@ -6,7 +6,7 @@ import PollChannel, { IPollChannel } from "../schemas/PollChannel";
 
 // TODO: Move these two functions to Poll schema.
 function isProposal(poll: IPoll) {
-	const startWithPropAndNumberRegex = new RegExp(/^Prop [0-9]+.*/g);
+	const startWithPropAndNumberRegex = new RegExp(/^((Prop)|(Proposal)) [0-9]+.*/g);
 	const matches = poll.pollData.title.match(startWithPropAndNumberRegex);
 	if (!matches || matches.length === 0) {
 		return false;
