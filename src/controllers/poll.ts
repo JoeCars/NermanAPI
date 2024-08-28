@@ -82,10 +82,12 @@ async function countVotes(poll: IPoll) {
 	forVotes += choiceCounts.get("yes") ?? 0; // Used by manual ones before prop 80.
 	let againstVotes = choiceCounts.get("against") ?? 0;
 	againstVotes += choiceCounts.get("no") ?? 0; // Used by manual ones before prop 80.
+	const oldAbstainVotes = choiceCounts.get("against") ?? 0; // Used by manual ones before prop 80.
 
 	return {
 		forVotes,
-		againstVotes
+		againstVotes,
+		oldAbstainVotes
 	};
 }
 
@@ -145,8 +147,8 @@ export async function getPolls(req: Request, res: Response) {
 		const proposalId = extractProposalId(poll);
 		const usersEligible = countUsersEligible(poll);
 		const usersParticipated = countUsersParticipated(poll);
-		const { forVotes, againstVotes } = await countVotes(poll);
-		const abstainVotes = countAbstainVotes(poll);
+		const { forVotes, againstVotes, oldAbstainVotes } = await countVotes(poll);
+		const abstainVotes = countAbstainVotes(poll) + oldAbstainVotes;
 
 		proposalPollStats.push({
 			proposalId,
