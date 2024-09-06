@@ -12,7 +12,8 @@ export interface INouncillor {
 const nouncillorSchema = new Schema<INouncillor>({
 	discordId: {
 		type: Schema.Types.String,
-		required: true
+		required: true,
+		unique: true
 	},
 	walletAddress: {
 		type: Schema.Types.String,
