@@ -19,6 +19,7 @@ export interface IPoll {
 	status: string;
 	pollSucceeded: boolean;
 	pollNumber: number;
+	timeCreated: Date
 }
 
 export interface PollModel extends Model<IPoll> {
@@ -65,7 +66,8 @@ const PollSchema = new Schema<IPoll, PollModel>(
 			enum: ["open", "closed", "cancelled", "canceled"]
 		},
 		pollSucceeded: { type: Schema.Types.Boolean, required: true },
-		pollNumber: { type: Schema.Types.Number, required: true }
+		pollNumber: { type: Schema.Types.Number, required: true },
+		timeCreated: { type: Schema.Types.Date, required: true }
 	},
 	{
 		statics: {
