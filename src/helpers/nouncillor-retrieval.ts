@@ -1,5 +1,5 @@
 import User, { IUser } from "../schemas/User";
-import Poll from "../schemas/Poll";
+import Poll, { IPoll } from "../schemas/Poll";
 import PollChannel from "../schemas/PollChannel";
 import { INouncillor } from "../schemas/Nouncillor";
 
@@ -39,8 +39,7 @@ export async function fetchAllNouncilPolls() {
 	return polls;
 }
 
-export async function calculateNouncillorParticipation(nouncillor: INouncillor) {
-	const polls = await fetchAllNouncilPolls();
+export async function calculateNouncillorParticipation(nouncillor: INouncillor, polls: IPoll[]) {
 	const validPolls = polls.filter((poll) => {
 		return poll.timeCreated > nouncillor.dateJoined;
 	});
