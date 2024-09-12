@@ -70,6 +70,8 @@ export async function fetchNouncillorInformation(nouncillor: INouncillor) {
 	}
 	return {
 		userId: user.discordId,
-		username: user.nameHistory[user.nameHistory.length - 1] ?? ""
+		username: user.nameHistory[user.nameHistory.length - 1] ?? "",
+		twitterAddress: nouncillor.twitterAddress ?? "",
+		walletAddress: nouncillor.walletAddress ?? ""
 	};
 }
