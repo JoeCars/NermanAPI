@@ -36,8 +36,8 @@ interface ProcessedPoll {
 			abstain: number;
 		};
 		outcome: {
-			winner: string | null;
-			description: string | null;
+			winner: string | null; // Only defined when poll is closed.
+			description: string | null; // Only defined when poll is closed.
 		};
 	};
 	voteParticipation?: VoteParticipation[]; // Only defined when poll is closed.
@@ -136,8 +136,8 @@ export class PollProcessor {
 			status: poll.status,
 			referenceData: {
 				nounsPropId: proposalId.toString(),
-				nounsPropStart: Number(proposal.startBlock), // Check with Joel to see if this should be unix time.
-				nounsPropEnd: Number(proposal.endBlock) // Check with Joel to see if this should be unix time.
+				nounsPropStart: Number(proposal.startBlock),
+				nounsPropEnd: Number(proposal.endBlock)
 			},
 			publicVoteFeed: publicVoteFeed,
 			voteResult: {
