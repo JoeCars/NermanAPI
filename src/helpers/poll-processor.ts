@@ -94,15 +94,13 @@ async function _processPublicVoteFeed(poll: IPoll, pollChannel: IPollChannel): P
 				throw new Error("Encountered unexpected voting results.");
 		}
 
-		// Only push votes with reasons.
-		if (vote.reason.trim().length > 0) {
-			voteFeed.push({
-				discordId: discordIdToDisplay,
-				username: username,
-				vote: choice,
-				reason: vote.reason
-			});
-		}
+		const hasVoteReason = vote.reason.trim().length > 0;
+		voteFeed.push({
+			discordId: hasVoteReason ? discordIdToDisplay : null,
+			username: hasVoteReason ? username : null,
+			vote: choice,
+			reason: vote.reason
+		});
 	}
 
 	return voteFeed;
