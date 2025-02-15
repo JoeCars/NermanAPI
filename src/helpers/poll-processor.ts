@@ -17,17 +17,19 @@ interface VoteParticipation {
 	username: string;
 }
 
+interface ProposalReferenceData {
+	nounsPropId: string;
+	nounsPropStart: number;
+	nounsPropEnd: number;
+}
+
 interface ProcessedPoll {
 	title: string;
 	description: string;
 	timeStart: number;
 	timeEnd: number;
 	status: string;
-	referenceData: {
-		nounsPropId: string;
-		nounsPropStart: number;
-		nounsPropEnd: number;
-	};
+	referenceData?: ProposalReferenceData;
 	publicVoteFeed: PublicVoteFeed[];
 	voteResult: {
 		counts: {
@@ -108,8 +110,6 @@ async function _processPublicVoteFeed(poll: IPoll, pollChannel: IPollChannel): P
 
 export class PollProcessor {
 	static async processPoll(poll: IPoll): Promise<ProcessedPoll> {
-		const proposalId = extractProposalId(poll);
-		const proposal = await getProposal(proposalId);
 		const pollConfig = await PollChannel.findOne({ _id: poll.config }).lean().exec();
 		if (!pollConfig) {
 			console.error(`Unable to find poll config related to poll._id ${poll._id}.`);
@@ -126,17 +126,25 @@ export class PollProcessor {
 			voteReasonsFormatted = await _formatVoteReasons(poll, pollConfig, votes, pollOutcome);
 		}
 
+		let referenceData: ProposalReferenceData | undefined;
+
+		if (isProposal(poll)) {
+			const proposalId = extractProposalId(poll);
+			const proposal = await getProposal(proposalId);
+			referenceData =  {
+				nounsPropId: proposalId.toString(),
+				nounsPropStart: Number(proposal.startBlock),
+				nounsPropEnd: Number(proposal.endBlock)
+			};
+		}
+
 		const processedPoll: ProcessedPoll = {
 			title: poll.pollData.title,
 			description: poll.pollData.description,
 			timeStart: poll.timeCreated.getTime(),
 			timeEnd: poll.timeEnd.getTime(),
 			status: poll.status,
-			referenceData: {
-				nounsPropId: proposalId.toString(),
-				nounsPropStart: Number(proposal.startBlock),
-				nounsPropEnd: Number(proposal.endBlock)
-			},
+			referenceData: referenceData,
 			publicVoteFeed: publicVoteFeed,
 			voteResult: {
 				counts: {

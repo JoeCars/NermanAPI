@@ -24,6 +24,7 @@ export interface IPoll {
 
 export interface PollModel extends Model<IPoll> {
 	fetchNouncilPolls: () => Promise<HydratedDocument<IPoll>[]>;
+	fetchNouncilPoll: (pollNumber: number) => Promise<HydratedDocument<IPoll> | null>;
 }
 
 const PollSchema = new Schema<IPoll, PollModel>(
@@ -78,6 +79,14 @@ const PollSchema = new Schema<IPoll, PollModel>(
 				}
 				const polls = await this.find({ config: pollChannel._id }).sort({ timeCreated: 1 }).exec();
 				return polls;
+			},
+			async fetchNouncilPoll(pollNumber: number) {
+				const pollChannel = await PollChannel.findOne({ channelId: process.env.NOUNCIL_CHANNEL_ID }).exec();
+				if (!pollChannel) {
+					throw new Error(`Unable to find a poll channel for id ${process.env.NOUNCIL_CHANNEL_ID}`);
+				}
+				const poll = await this.findOne({ config: pollChannel._id, pollNumber: pollNumber }).sort({ timeCreated: 1 }).exec();
+				return poll;
 			}
 		}
 	}

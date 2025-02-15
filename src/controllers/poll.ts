@@ -43,17 +43,13 @@ export async function getPolls(req: Request, res: Response) {
 	res.json(proposalPollStats);
 }
 
-export async function getPollWithProposalId(req: Request, res: Response) {
-	const proposalId = Number(req.params.proposalId);
-
-	const nouncilPolls = await Poll.fetchNouncilPolls();
-	const targetPoll = nouncilPolls.filter((poll) => {
-		return isProposal(poll) && extractProposalId(poll) === proposalId;
-	})[0];
+export async function getPollWithPollNumber(req: Request, res: Response) {
+	const pollNumber = Number(req.params.pollNumber);
+	const targetPoll = await Poll.fetchNouncilPoll(pollNumber);
 	if (!targetPoll) {
 		return res.status(404).json({
 			statusCode: 404,
-			error: `unable to find poll for proposal ${proposalId}`
+			error: `unable to find poll ${pollNumber}`
 		});
 	}
 
@@ -61,10 +57,10 @@ export async function getPollWithProposalId(req: Request, res: Response) {
 		const processedPoll = await PollProcessor.processPoll(targetPoll);
 		res.json(processedPoll);
 	} catch (error) {
-		console.error(`encountered an error while processing proposalId ${proposalId}`, error);
+		console.error(`encountered an error while processing poll ${pollNumber}`, error);
 		return res.status(500).json({
 			statusCode: 500,
-			error: `server error, unable to find process results for proposal ${proposalId}`
+			error: `server error, unable to find process results for poll ${pollNumber}`
 		})
 	}
 
