@@ -61,7 +61,38 @@ export async function getPollWithPollNumber(req: Request, res: Response) {
 		return res.status(500).json({
 			statusCode: 500,
 			error: `server error, unable to find process results for poll ${pollNumber}`
-		})
+		});
+	}
+}
+
+export async function getPollWithProposalId(req: Request, res: Response) {
+	const proposalId = Number(req.params.proposalId);
+
+	const nouncilPolls = await Poll.fetchNouncilPolls();
+
+	const targetPoll = nouncilPolls.filter((poll) => {
+		return isProposal(poll) && extractProposalId(poll) === proposalId;
+	})[0];
+
+	if (!targetPoll) {
+		return res.status(404).json({
+			statusCode: 404,
+
+			error: `unable to find poll for proposal ${proposalId}`
+		});
 	}
 
+	try {
+		const processedPoll = await PollProcessor.processPoll(targetPoll);
+
+		res.json(processedPoll);
+	} catch (error) {
+		console.error(`encountered an error while processing proposalId ${proposalId}`, error);
+
+		return res.status(500).json({
+			statusCode: 500,
+
+			error: `server error, unable to find process results for proposal ${proposalId}`
+		});
+	}
 }

@@ -5,11 +5,13 @@ import cors from "cors";
 
 import { router as indexRouter } from "./routes/index";
 import { router as pollRouter } from "./routes/poll";
+import { router as proposalRouter } from "./routes/proposal";
 
 const app = express();
 
 app.use(cors());
 
+app.use("/proposal", proposalRouter);
 app.use("/poll", pollRouter);
 app.use("/", indexRouter);
 
