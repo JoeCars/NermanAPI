@@ -24,6 +24,7 @@ interface ProposalReferenceData {
 }
 
 interface ProcessedPoll {
+	pollId: number;
 	title: string;
 	description: string;
 	timeStart: number;
@@ -139,6 +140,7 @@ export class PollProcessor {
 		}
 
 		const processedPoll: ProcessedPoll = {
+			pollId: poll.pollNumber,
 			title: poll.pollData.title,
 			description: poll.pollData.description,
 			timeStart: poll.timeCreated.getTime(),
